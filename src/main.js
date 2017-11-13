@@ -6,8 +6,11 @@ import VueRouter from "vue-router";
 import App from "./App";
 import router from "./router/index";
 import VueLazyload from "vue-lazyload";
+import VueAwesomeSwiper from "vue-awesome-swiper";
+
 
 Vue.use(VueRouter)
+Vue.use(VueAwesomeSwiper)
 Vue.use(VueLazyload, {
   preLoad: 1.3,
   error: 'static/9a8f82ebacaea7f31d3bf167440af6fa5c2451cb182bb-BGao9s_fw658.png',
