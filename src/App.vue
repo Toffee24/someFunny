@@ -1,6 +1,7 @@
 <template>
-  <div class="mainView">
-    <drawer :show.sync='drawerVisibility' :drawer-style="{width: '200px'}" placement="left" show-mode="push">
+  <div class="mainView" ref="mainView">
+    <drawer :show.sync='drawerVisibility' :drawer-style="{width: '200px',height:'100%'}" placement="left"
+            show-mode="push">
       <div slot="drawer">
         <div class="menuHeader">
           <div style="">
@@ -14,6 +15,11 @@
           <cell-box align-items="center" @click.native="jumpItem" tag="fuli">
             <div class="menuItem">
               福利
+            </div>
+          </cell-box>
+          <cell-box align-items="center" @click.native="jumpItem" tag="dayNews">
+            <div class="menuItem">
+              每日资讯
             </div>
           </cell-box>
           <cell-box align-items="center" @click.native="jumpItem" tag="android">
@@ -33,16 +39,16 @@
           </cell-box>
         </group>
       </div>
-      <div solt="default">
-        <sticky>
-          <x-header>
+      <div slot="default">
+        <div style="height:46px;">
+          <x-header style="width:100%;position:fixed;left:0;top:0;z-index:100;height: 46px">
             <span>{{itemName}}</span>
             <x-icon slot="overwrite-left" type="navicon" size="35"
                     style="fill:#fff;position:relative;top:-8px;left:-3px;"
                     @click="drawerVisibility = !drawerVisibility"></x-icon>
           </x-header>
-        </sticky>
-        <div class="mainContent">
+        </div>
+        <div class="mainContent" ref="mainContent">
           <router-view></router-view>
         </div>
       </div>
@@ -52,8 +58,7 @@
 
 <script>
   import {Drawer, Group, Cell, CellBox, Card, Blur, XHeader, Sticky} from 'vux'
-
-  import router from './router/index'
+  //  import router from './router/index'
   export default {
     name: 'app',
     components: {
@@ -66,10 +71,18 @@
       XHeader,
       Sticky
     },
+    created(){
+      this.bodyScroll = function (event) {
+        event.preventDefault()
+      }
+      this.$nextTick(() => {
+        this.$refs.mainContent.style.height = document.body.clientHeight - 46 + 'px'
+      })
+    },
     data(){
       return {
         drawerVisibility: false,
-        logourl: 'http://p1.sinaimg.cn/2497753672/180/89461402559761',
+        logourl: 'static/538e17811a35288577499f0fce51b603_1.jpg',
         itemName: '福利'
       }
     },
@@ -81,16 +94,19 @@
         this.drawerVisibility = false
         switch (tag) {
           case 'fuli':
-            router.push({path: 'fuli'})
+            this.$router.push({path: 'fuli'})
             break
           case 'android':
-            router.push({path: 'android'})
+            this.$router.push({path: 'android'})
             break
           case 'ios':
-            router.push({path: 'ios'})
+            this.$router.push({path: 'ios'})
             break
           case 'fe':
-            router.push({path: 'fe'})
+            this.$router.push({path: 'fe'})
+            break
+          case 'dayNews':
+            this.$router.push({path: 'dayNews'})
             break
         }
       }
@@ -98,7 +114,9 @@
     watch: {
       drawerVisibility: function (newVlue) {
         if (newVlue) {
-          document.addEventListener('touchmove', function(e) { e.preventDefault() }, false)
+          this.$refs.mainView.addEventListener('touchmove', this.bodyScroll, false)
+        } else {
+          this.$refs.mainView.removeEventListener('touchmove', this.bodyScroll, false)
         }
       }
     }
