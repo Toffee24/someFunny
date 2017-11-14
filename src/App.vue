@@ -74,9 +74,11 @@
     created(){
       this.bodyScroll = function (event) {
         event.preventDefault()
+        event.preventDefault()
       }
       this.$nextTick(() => {
         this.$refs.mainContent.style.height = document.body.clientHeight - 46 + 'px'
+        this.$store.commit('clientHeight', document.body.clientHeight - 46)
       })
     },
     data(){

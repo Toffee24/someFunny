@@ -7,8 +7,8 @@ import App from "./App";
 import router from "./router/index";
 import VueLazyload from "vue-lazyload";
 import VueAwesomeSwiper from "vue-awesome-swiper";
-
-
+import "./assets/reset.css";
+import store from "./vuex/store";
 Vue.use(VueRouter)
 Vue.use(VueAwesomeSwiper)
 Vue.use(VueLazyload, {
@@ -25,5 +25,6 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app-box')

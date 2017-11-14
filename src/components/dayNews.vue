@@ -1,23 +1,35 @@
 <template>
-  <swiper :options="swiperOption" :not-next-tick="notNextTick" ref="mySwiper">
-    <!-- slides -->
-    <swiper-slide>I'm Slide 1</swiper-slide>
-    <swiper-slide>I'm Slide 2</swiper-slide>
-    <swiper-slide>I'm Slide 3</swiper-slide>
-    <swiper-slide>I'm Slide 4</swiper-slide>
-    <swiper-slide>I'm Slide 5</swiper-slide>
-    <swiper-slide>I'm Slide 6</swiper-slide>
-    <swiper-slide>I'm Slide 7</swiper-slide>
-    <!-- Optional controls -->
-    <div class="swiper-pagination" slot="pagination"></div>
-    <div class="swiper-button-prev" slot="button-prev"></div>
-    <div class="swiper-button-next" slot="button-next"></div>
-    <div class="swiper-scrollbar" slot="scrollbar"></div>
-  </swiper>
+  <div class="swiperWrapper" ref="swiperWrapper">
+    <swiper :options="swiperOption" :not-next-tick="notNextTick" ref="mySwiper">
+      <!-- slides -->
+      <swiper-slide>
+        <div :style="{height:this.$store.state.clientHeight+'px'}" class="dayWrapper">
+          <day :title="newsData[0].title" :content="newsData[0].content"></day>
+        </div>
+      </swiper-slide>
+      <swiper-slide>
+        <div :style="{height:this.$store.state.clientHeight+'px'}" class="dayWrapper">
+
+        </div>
+      </swiper-slide>
+      <swiper-slide>
+        <div :style="{height:this.$store.state.clientHeight+'px'}" class="dayWrapper">
+
+        </div>
+      </swiper-slide>
+      <!-- Optional controls -->
+      <div class="swiper-pagination" slot="pagination"></div>
+      <!--<div class="swiper-button-prev" slot="button-prev"></div>-->
+      <!--<div class="swiper-button-next" slot="button-next"></div>-->
+      <!--<div class="swiper-scrollbar" slot="scrollbar"></div>-->
+    </swiper>
+  </div>
 </template>
 
 <script>
+  import axios from 'axios'
   import 'swiper/dist/css/swiper.css'
+  import day from './day.vue'
   // swiper options example:
   export default {
     name: 'dayNews',
@@ -28,17 +40,15 @@
         notNextTick: true,
         swiperOption: {
           // swiper options 所有的配置同swiper官方api配置
-          autoplay: 3000,
           direction: 'horizontal',
           grabCursor: true,
           setWrapperSize: true,
           autoHeight: true,
           pagination: '.swiper-pagination',
           paginationClickable: true,
-          prevButton: '.swiper-button-prev',
-          nextButton: '.swiper-button-next',
-          scrollbar: '.swiper-scrollbar',
-          mousewheelControl: true,
+//          prevButton: '.swiper-button-prev',
+//          nextButton: '.swiper-button-next',
+//          scrollbar: '.swiper-scrollbar',
           observeParents: true,
           // if you need use plugins in the swiper, you can config in here like this
           // 如果自行设计了插件，那么插件的一些配置相关参数，也应该出现在这个对象中，如下debugger
@@ -50,7 +60,9 @@
           }
           // more Swiper configs and callbacks...
           // ...
-        }
+        },
+        wrapperHeight: '',
+        newsData: [{title: '// you can find current swiper instance object like this, while the notNextTick property value must be true如果你需要得到当前的swiper对象来做一些事情，你可以像下面这样定义一个方法属性来获取当前的swiper对象，同时notNextTick必须为true'}]
       }
     },
     // you can find current swiper instance object like this, while the notNextTick property value must be true
@@ -58,13 +70,47 @@
     computed: {
       swiper() {
         return this.$refs.mySwiper.swiper
-      }
+      },
     },
     mounted() {
+      //初始化swiper容器高度
+      this.$nextTick(() => {
+        this.wrapperHeight = this.$refs.swiperWrapper.clientHeight
+      })
       // you can use current swiper instance object to do something(swiper methods)
       // 然后你就可以使用当前上下文内的swiper对象去做你想做的事了
       console.log('this is current swiper instance object', this.swiper)
-      this.swiper.slideTo(3, 1000, false)
+//      this.swiper.slideTo(3, 1000, false)
+    },
+    created(){
+      this.loadData()
+    },
+    methods: {
+      loadData(){
+        let newsNum = 1, page = 1
+        let url = `http://gank.io/api/history/content/${newsNum}/${page}`
+        axios.get(url)
+          .then((response) => {
+            this.newsData = response.data.results
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      }
+    },
+    components: {
+      day
     }
   }
 </script>
+
+<style lang="scss">
+  .swiperWrapper {
+    height: 100%;
+    .dayWrapper {
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+</style>
