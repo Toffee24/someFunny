@@ -4,13 +4,18 @@
       <ul class="content" ref="scrollContent">
         <grid>
           <grid-item>
-            <img v-for="(item,index) in imgSrc" class="ximg-demo" v-lazy="item" v-if="index%2===0">
+            <img v-for="(item,index) in imgSrc" class="ximg-demo" v-lazy="item.src" v-if="index%2===0"
+                 @click="show(index)">
           </grid-item>
           <grid-item>
-            <img v-for="(item,index) in imgSrc" class="ximg-demo" v-lazy="item" v-if="index%2!==0">
+            <img v-for="(item,index) in imgSrc" class="ximg-demo" v-lazy="item.src" v-if="index%2!==0"
+                 @click="show(index)">
           </grid-item>
         </grid>
       </ul>
+      <div v-transfer-dom>
+        <previewer :list="imgSrc" ref="previewer"></previewer>
+      </div>
       <p style="text-align:center;">
         <inline-loading></inline-loading>
         <span style="vertical-align:middle;display:inline-block;font-size:14px;">&nbsp;&nbsp;加载中</span>
@@ -23,7 +28,7 @@
 
 <script>
   import axios from 'axios'
-  import {XImg, Grid, GridItem, InlineLoading} from 'vux'
+  import {XImg, Grid, GridItem, InlineLoading, Previewer, TransferDom} from 'vux'
   import PullTo from 'vue-pull-to'
   export default{
     created(){
@@ -48,9 +53,14 @@
       Grid,
       GridItem,
       PullTo,
-      InlineLoading
+      InlineLoading,
+      Previewer,
+      TransferDom
     },
     methods: {
+      show (index) {
+        this.$refs.previewer.show(index)
+      },
       loadPic(loaded, isMore){
         var _this = this
         if (isMore) {
@@ -59,7 +69,7 @@
           axios.get(url)
             .then(function (response) {
               response.data.results.forEach(function (el, idx) {
-                _this.imgSrc.push(el.url)
+                _this.imgSrc.push({src: el.url})
               })
               if (loaded) {
                 loaded('done')
@@ -77,7 +87,7 @@
               .then(function (response) {
                 _this.imgSrc = []
                 response.data.results.forEach(function (el, idx) {
-                  _this.imgSrc.push(el.url)
+                  _this.imgSrc.push({src: el.url})
                 })
                 if (loaded) {
                   loaded('done')

@@ -1,33 +1,20 @@
 <template>
   <div class="swiperWrapper" ref="swiperWrapper">
+    <div class="swiper-pagination" slot="pagination"></div>
     <swiper :options="swiperOption" :not-next-tick="notNextTick" ref="mySwiper">
       <!-- slides -->
-      <swiper-slide>
-        <div :style="{height:this.$store.state.clientHeight+'px'}" class="dayWrapper">
-          <day :title="newsData[0].title" :content="newsData[0].content"></day>
+      <swiper-slide v-for="(item,idx) in newsData" :key="idx">
+        <div :style="{height:clientHeight+'px'}" class="dayWrapper">
+          <day :title="item.title" :content="item.content"></day>
         </div>
       </swiper-slide>
-      <swiper-slide>
-        <div :style="{height:this.$store.state.clientHeight+'px'}" class="dayWrapper">
-
-        </div>
-      </swiper-slide>
-      <swiper-slide>
-        <div :style="{height:this.$store.state.clientHeight+'px'}" class="dayWrapper">
-
-        </div>
-      </swiper-slide>
-      <!-- Optional controls -->
-      <div class="swiper-pagination" slot="pagination"></div>
-      <!--<div class="swiper-button-prev" slot="button-prev"></div>-->
-      <!--<div class="swiper-button-next" slot="button-next"></div>-->
-      <!--<div class="swiper-scrollbar" slot="scrollbar"></div>-->
     </swiper>
   </div>
 </template>
 
 <script>
   import axios from 'axios'
+  import {mapState} from 'vuex'
   import 'swiper/dist/css/swiper.css'
   import day from './day.vue'
   // swiper options example:
@@ -35,8 +22,8 @@
     name: 'dayNews',
     data() {
       return {
-        // NotNextTick is a component's own property, and if notNextTick is set to true, the component will not instantiate the swiper through NextTick, which means you can get the swiper object the first time (if you need to use the get swiper object to do what Things, then this property must be true)
-        // notNextTick是一个组件自有属性，如果notNextTick设置为true，组件则不会通过NextTick来实例化swiper，也就意味着你可以在第一时间获取到swiper对象，假如你需要刚加载遍使用获取swiper对象来做什么事，那么这个属性一定要是true
+        TAB_NAME: ['今天', '昨天', '前天', '三天前', '四天前'],
+        date: {},
         notNextTick: true,
         swiperOption: {
           // swiper options 所有的配置同swiper官方api配置
@@ -46,39 +33,36 @@
           autoHeight: true,
           pagination: '.swiper-pagination',
           paginationClickable: true,
-//          prevButton: '.swiper-button-prev',
-//          nextButton: '.swiper-button-next',
-//          scrollbar: '.swiper-scrollbar',
           observeParents: true,
-          // if you need use plugins in the swiper, you can config in here like this
-          // 如果自行设计了插件，那么插件的一些配置相关参数，也应该出现在这个对象中，如下debugger
           debugger: true,
-          // swiper callbacks
-          // swiper的各种回调函数也可以出现在这个对象中，和swiper官方一样
-          onTransitionStart (swiper) {
+          onTransitionStart: (swiper) => {
             console.log(swiper)
-          }
-          // more Swiper configs and callbacks...
-          // ...
+          },
+          paginationBulletRender: (swiper, index, className) => {
+            return `<div class="${className} swiper-pagination-bullet-custom">${this.TAB_NAME[index]}</div>`;
+          },
+          onSlideChangeStart: (swiper) => {
+            let date = this.computedDate(swiper.activeIndex)
+//            this.getDateData(date)
+          },
         },
         wrapperHeight: '',
-        newsData: [{title: '// you can find current swiper instance object like this, while the notNextTick property value must be true如果你需要得到当前的swiper对象来做一些事情，你可以像下面这样定义一个方法属性来获取当前的swiper对象，同时notNextTick必须为true'}]
+        newsData: [{}]
       }
     },
-    // you can find current swiper instance object like this, while the notNextTick property value must be true
-    // 如果你需要得到当前的swiper对象来做一些事情，你可以像下面这样定义一个方法属性来获取当前的swiper对象，同时notNextTick必须为true
     computed: {
       swiper() {
         return this.$refs.mySwiper.swiper
       },
+      ...mapState([
+        'clientHeight'
+      ])
     },
     mounted() {
       //初始化swiper容器高度
       this.$nextTick(() => {
         this.wrapperHeight = this.$refs.swiperWrapper.clientHeight
       })
-      // you can use current swiper instance object to do something(swiper methods)
-      // 然后你就可以使用当前上下文内的swiper对象去做你想做的事了
       console.log('this is current swiper instance object', this.swiper)
 //      this.swiper.slideTo(3, 1000, false)
     },
@@ -87,15 +71,44 @@
     },
     methods: {
       loadData(){
-        let newsNum = 1, page = 1
+        let newsNum = 5, page = 1
         let url = `http://gank.io/api/history/content/${newsNum}/${page}`
         axios.get(url)
           .then((response) => {
             this.newsData = response.data.results
           })
+
+      },
+      getDateData(date){
+        let url = `http://gank.io/api/history/content/day/${date}`
+        axios.get(url)
+          .then((res) => {
+            this.newsData = response.data.results
+          })
           .catch((error) => {
             console.log(error)
           })
+      },
+      computedDate(n){
+        let d = new Date();
+        let year = d.getFullYear();
+        let mon = d.getMonth() + 1;
+        let day = d.getDate();
+        if (day <= n) {
+          if (mon > 1) {
+            mon = mon - 1;
+          }
+          else {
+            year = year - 1;
+            mon = 12;
+          }
+        }
+        d.setDate(d.getDate() - n);
+        year = d.getFullYear();
+        mon = d.getMonth() + 1;
+        day = d.getDate();
+        let s = year + "/" + (mon < 10 ? ('0' + mon) : mon) + "/" + (day < 10 ? ('0' + day) : day);
+        return s;
       }
     },
     components: {
@@ -107,7 +120,23 @@
 <style lang="scss">
   .swiperWrapper {
     height: 100%;
+    .swiper-pagination-bullets {
+      display: flex;
+      width: 100%;
+      height: 44px;
+      align-items: center;
+      .swiper-pagination-bullet {
+        flex: 1;
+        height: auto;
+        width: auto;
+        background-color: transparent;
+        &.swiper-pagination-bullet {
+          background-color: transparent;
+        }
+      }
+    }
     .dayWrapper {
+      margin-top: 44px;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
     }

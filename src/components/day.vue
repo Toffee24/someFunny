@@ -16,7 +16,7 @@
 
 <style lang="scss">
   .day {
-    padding: 10px 10px 20px 10px;
+    padding: 10px 10px 80px 10px;
     .title {
       text-align: left;
       font-weight: 700;

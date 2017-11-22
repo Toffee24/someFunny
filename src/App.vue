@@ -14,27 +14,20 @@
         <group class="navItemGroup">
           <cell-box align-items="center" @click.native="jumpItem" tag="fuli">
             <div class="menuItem">
-              福利
+              <img src="static/sandwitch.png" width="15" height="15" style="margin-right: 10px;">
+              妹子图
             </div>
           </cell-box>
           <cell-box align-items="center" @click.native="jumpItem" tag="dayNews">
             <div class="menuItem">
-              每日资讯
+              <img src="static/orangeJuice.png" width="15" height="15" style="margin-right: 10px;">
+              每日干货
             </div>
           </cell-box>
-          <cell-box align-items="center" @click.native="jumpItem" tag="android">
+          <cell-box align-items="center" @click.native="jumpItem" tag="random">
             <div class="menuItem">
-              Android
-            </div>
-          </cell-box>
-          <cell-box align-items="center" @click.native="jumpItem" tag="ios">
-            <div class="menuItem">
-              IOS
-            </div>
-          </cell-box>
-          <cell-box align-items="center" @click.native="jumpItem" tag="fe">
-            <div class="menuItem">
-              前端
+              <img src="static/dingling.png" width="15" height="15" style="margin-right: 10px;">
+              随便看看
             </div>
           </cell-box>
         </group>
@@ -90,7 +83,7 @@
     },
     methods: {
       jumpItem(e) {
-        let txt = e.currentTarget.children[0].innerHTML
+        let txt = e.currentTarget.children[0].innerText
         let tag = e.currentTarget.getAttribute('tag')
         this.itemName = txt
         this.drawerVisibility = false
@@ -98,8 +91,8 @@
           case 'fuli':
             this.$router.push({path: 'fuli'})
             break
-          case 'android':
-            this.$router.push({path: 'android'})
+          case 'random':
+            this.$router.push({path: 'random'})
             break
           case 'ios':
             this.$router.push({path: 'ios'})
@@ -153,6 +146,7 @@
     text-align: center;
     color: #f0f0f0;
     font-weight: bold;
+    margin-top: 20px;
   }
 
   .center {
