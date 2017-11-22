@@ -2,6 +2,26 @@
 
 > 预览地址：https://toffee24.github.io/someFunny/dist/index.html
 
+>  一款用于上班摸鱼的小APP。
+
+***
+
+>* 本项目地址[github地址](https://github.com/Toffee24/someFunny)
+
+>* 手机扫一扫
+
+![项目二维码.png](https://chaqianma-open.oss-cn-hangzhou.aliyuncs.com/data/1511340610982.png)
+
+
+### 项目技术架构
+***
+*  vue
+*  vue-axios
+*  vue-router
+*  vuex
+*  vux
+*  webpack
+
 ## Build Setup
 
 ``` bash
