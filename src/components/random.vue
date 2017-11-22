@@ -9,7 +9,7 @@
               <a :href="item.url" target="_blank" class="descLink">
                 <p class="desc">{{item.desc}}</p>
               </a>
-              <p class="info">{{item.publishedAt.split('T')[0]}} By {{item.who}}</p>
+              <p class="info">By {{item.who}}</p>  <!--{{item.publishedAt.split('T')[0]}} -->
             </div>
           </card>
         </li>
