@@ -72,7 +72,7 @@
     methods: {
       loadData(){
         let newsNum = 5, page = 1
-        let url = `http://gank.io/api/history/content/${newsNum}/${page}`
+        let url = `https://gank.io/api/history/content/${newsNum}/${page}`
         axios.get(url)
           .then((response) => {
             this.newsData = response.data.results
@@ -80,7 +80,7 @@
 
       },
       getDateData(date){
-        let url = `http://gank.io/api/history/content/day/${date}`
+        let url = `https://gank.io/api/history/content/day/${date}`
         axios.get(url)
           .then((res) => {
             this.newsData = response.data.results

@@ -29,16 +29,6 @@
     data(){
       return {
         pageData: [],
-        config: {
-          pullText: '下拉刷新1', // 下拉时显示的文字
-          triggerText: '释放更新', // 下拉到触发距离时显示的文字
-          loadingText: '加载中...', // 加载中的文字
-          doneText: '加载完成', // 加载完成的文字
-          failText: '加载失败', // 加载失败的文字
-          loadedStayTime: 400, // 加载完后停留的时间ms
-          stayDistance: 50, // 触发刷新后停留的距离
-          triggerDistance: 70 // 下拉刷新触发的距离
-        }
       }
     },
     components: {
@@ -47,7 +37,7 @@
     },
     methods: {
       getRandomData(loaded){
-        axios.get('http://gank.io/api/random/data/%E6%8B%93%E5%B1%95%E8%B5%84%E6%BA%90/20')
+        axios.get('https://gank.io/api/random/data/%E6%8B%93%E5%B1%95%E8%B5%84%E6%BA%90/20')
           .then((response) => {
             this.pageData = response.data.results
             if (loaded) {
