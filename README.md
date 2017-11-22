@@ -1,6 +1,6 @@
 # somefunny
 
-> MEIZI INFO FE
+> 预览地址：https://toffee24.github.io/someFunny/dist/index.html
 
 ## Build Setup
 
