@@ -2,7 +2,7 @@
 
 > 预览地址：[点我](https://toffee24.github.io/someFunny/dist/index.html)
 
->  一款用于上班摸鱼的小APP。
+>  一款用于摸鱼的小APP。
 
 ***
 
