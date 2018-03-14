@@ -12,6 +12,12 @@
           </div>
         </div>
         <group class="navItemGroup">
+          <cell-box align-items="center" @click.native="jumpItem" tag="login">
+            <div class="menuItem">
+              <img src="static/candy.png" width="15" height="15" style="margin-right: 10px;">
+              登陆/注册
+            </div>
+          </cell-box>
           <cell-box align-items="center" @click.native="jumpItem" tag="fuli">
             <div class="menuItem">
               <img src="static/sandwitch.png" width="15" height="15" style="margin-right: 10px;">
@@ -88,6 +94,9 @@
         this.itemName = txt
         this.drawerVisibility = false
         switch (tag) {
+          case 'login':
+            this.$router.push({path: 'login'})
+            break
           case 'fuli':
             this.$router.push({path: 'fuli'})
             break

@@ -9,6 +9,14 @@ import VueLazyload from "vue-lazyload";
 import VueAwesomeSwiper from "vue-awesome-swiper";
 import "./assets/reset.css";
 import store from "./vuex/store";
+
+import  { LoadingPlugin } from 'vux'
+Vue.use(LoadingPlugin)
+
+import axios from './untils/ajaxRequest'
+import  { AlertPlugin } from 'vux'
+
+Vue.use(AlertPlugin)
 Vue.use(VueRouter)
 Vue.use(VueAwesomeSwiper)
 Vue.use(VueLazyload, {
@@ -21,10 +29,11 @@ Vue.use(VueLazyload, {
 FastClick.attach(document.body)
 
 Vue.config.productionTip = false
-
+Vue.prototype.$axios = axios
 /* eslint-disable no-new */
-new Vue({
+let app=new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app-box')
+export default app

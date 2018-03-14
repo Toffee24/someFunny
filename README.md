@@ -3,7 +3,7 @@
 > 预览地址：[点我](https://toffee24.github.io/someFunny/dist/index.html)
 
 >  一款咨询获取展示的小项目，接口来自第三方gank.io。
->  目前在学习python-flask，要增加登陆，收藏功能。
+>  目前在增加python-flask框架RESTful接口，增加登陆，收藏功能。
 
 ***
 

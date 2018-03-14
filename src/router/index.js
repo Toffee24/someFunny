@@ -7,8 +7,10 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    {path: '/', component: fuli},
     {
+      path: '/',
+      redirect:'/login'
+    }, {
       path: '/fuli',
       name: 'fuli',
       component: fuli
@@ -20,6 +22,10 @@ export default new Router({
       path: '/random',
       name: 'random',
       component: random
+    },{
+      path: '/login',
+      name: 'login',
+      component: resolve=>require(['../components/login.vue'],resolve)
     }
   ]
 })
