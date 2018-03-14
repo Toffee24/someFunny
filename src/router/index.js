@@ -5,27 +5,32 @@ import dayNews from "../components/dayNews.vue";
 import random from "../components/random.vue";
 Vue.use(Router)
 
-export default new Router({
+const router= new Router({
   routes: [
     {
       path: '/',
-      redirect:'/login'
+      redirect:'/dayNews'
     }, {
       path: '/fuli',
-      name: 'fuli',
+      name: '妹子图',
       component: fuli
     }, {
       path: '/dayNews',
-      name: 'dayNews',
+      name: '每日干货',
       component: dayNews
     }, {
       path: '/random',
-      name: 'random',
+      name: '随便看看',
       component: random
     },{
       path: '/login',
-      name: 'login',
+      name: '登陆/注册',
       component: resolve=>require(['../components/login.vue'],resolve)
+    },{
+    path:'/collection',
+      name:'我的收藏',
+      component: resolve=>require(['../components/collection.vue'],resolve)
     }
   ]
 })
+export default router

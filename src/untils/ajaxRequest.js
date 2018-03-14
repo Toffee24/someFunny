@@ -7,7 +7,9 @@ let instance = axios.create({
   baseURL: serverpath,
   timeout: 30 * 1000,
   cache: false,
-  headers: {}
+  headers: {
+    'Access-Control-Allow-Origin':'*'
+  }
 })
 
 //发起请求前拦截
@@ -26,7 +28,6 @@ instance.interceptors.response.use(function (response) {
   app.$vux.loading.hide()
   return response
 }, function (error) {
-  debugger
   app.$vux.loading.hide()
   app.$vux.alert.show({
     content:'网络连接错误'

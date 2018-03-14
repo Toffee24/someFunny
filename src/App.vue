@@ -7,33 +7,35 @@
           <div style="">
             <blur :blur-amount=40 :url="logourl">
               <p class="center"><img :src="logourl" class="logo"></p>
-              <p class="loginName">Toffee</p>
+              <p class="loginName">{{userName}}</p>
             </blur>
           </div>
         </div>
         <group class="navItemGroup">
-          <cell-box align-items="center" @click.native="jumpItem" tag="login">
+          <cell-box align-items="center" @click.native="jumpItem" tag="collection"
+                    v-if="isShowCollection">
             <div class="menuItem">
-              <img src="static/candy.png" width="15" height="15" style="margin-right: 10px;">
-              登陆/注册
+              <img src="static/collection.png" width="15" height="15" style="margin-right: 10px;">我的收藏
+            </div>
+          </cell-box>
+          <cell-box align-items="center" @click.native="jumpItem" tag="login" v-if="!isShowCollection">
+            <div class="menuItem">
+              <img src="static/candy.png" width="15" height="15" style="margin-right: 10px;">登陆/注册
             </div>
           </cell-box>
           <cell-box align-items="center" @click.native="jumpItem" tag="fuli">
             <div class="menuItem">
-              <img src="static/sandwitch.png" width="15" height="15" style="margin-right: 10px;">
-              妹子图
+              <img src="static/sandwitch.png" width="15" height="15" style="margin-right: 10px;">妹子图
             </div>
           </cell-box>
           <cell-box align-items="center" @click.native="jumpItem" tag="dayNews">
             <div class="menuItem">
-              <img src="static/orangeJuice.png" width="15" height="15" style="margin-right: 10px;">
-              每日干货
+              <img src="static/orangeJuice.png" width="15" height="15" style="margin-right: 10px;">每日干货
             </div>
           </cell-box>
           <cell-box align-items="center" @click.native="jumpItem" tag="random">
             <div class="menuItem">
-              <img src="static/dingling.png" width="15" height="15" style="margin-right: 10px;">
-              随便看看
+              <img src="static/dingling.png" width="15" height="15" style="margin-right: 10px;">随便看看
             </div>
           </cell-box>
         </group>
@@ -41,7 +43,7 @@
       <div slot="default">
         <div style="height:46px;">
           <x-header style="width:100%;position:fixed;left:0;top:0;z-index:100;height: 46px">
-            <span>{{itemName}}</span>
+            <span>{{this.$store.state.itemName}}</span>
             <x-icon slot="overwrite-left" type="navicon" size="35"
                     style="fill:#fff;position:relative;top:-8px;left:-3px;"
                     @click="drawerVisibility = !drawerVisibility"></x-icon>
@@ -70,7 +72,7 @@
       XHeader,
       Sticky
     },
-    created(){
+    created() {
       this.bodyScroll = function (event) {
         event.preventDefault()
         event.preventDefault()
@@ -80,49 +82,59 @@
         this.$store.commit('clientHeight', document.body.clientHeight - 46)
       })
     },
-    data(){
+    data() {
       return {
         drawerVisibility: false,
         logourl: 'static/538e17811a35288577499f0fce51b603_1.jpg',
-        itemName: '福利'
+        itemName: this.$store.state.itemName
+      }
+    },
+    computed: {
+      isShowCollection() {
+        return this.$store.state.userInfo ? true : false
+      },
+      userName() {
+        return this.$store.state.userInfo? this.$store.state.userInfo.userName : '未登陆'
       }
     },
     methods: {
       jumpItem(e) {
         let txt = e.currentTarget.children[0].innerText
-        let tag = e.currentTarget.getAttribute('tag')
         this.itemName = txt
+        this.$store.commit('itemName', txt)
         this.drawerVisibility = false
-        switch (tag) {
-          case 'login':
+        switch (this.itemName) {
+          case '我的收藏':
+            this.$router.push({path: 'collection'})
+            break
+          case '登陆/注册':
             this.$router.push({path: 'login'})
             break
-          case 'fuli':
+          case '妹子图':
             this.$router.push({path: 'fuli'})
             break
-          case 'random':
+          case '随便看看':
             this.$router.push({path: 'random'})
             break
-          case 'ios':
-            this.$router.push({path: 'ios'})
-            break
-          case 'fe':
-            this.$router.push({path: 'fe'})
-            break
-          case 'dayNews':
+          case '每日干货':
             this.$router.push({path: 'dayNews'})
             break
         }
+      },
+      getPath() {
+        //路由变化
+        console.log(this.$router)
       }
     },
     watch: {
-      drawerVisibility: function (newVlue) {
+      drawerVisibility(newVlue) {
         if (newVlue) {
           this.$refs.mainView.addEventListener('touchmove', this.bodyScroll, false)
         } else {
           this.$refs.mainView.removeEventListener('touchmove', this.bodyScroll, false)
         }
-      }
+      },
+      "$route": "getPath"
     }
   }
 

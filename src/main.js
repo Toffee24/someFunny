@@ -10,11 +10,13 @@ import VueAwesomeSwiper from "vue-awesome-swiper";
 import "./assets/reset.css";
 import store from "./vuex/store";
 
-import  { LoadingPlugin } from 'vux'
+import {LoadingPlugin,ToastPlugin  } from 'vux'
+
 Vue.use(LoadingPlugin)
+Vue.use(ToastPlugin)
 
 import axios from './untils/ajaxRequest'
-import  { AlertPlugin } from 'vux'
+import {AlertPlugin} from 'vux'
 
 Vue.use(AlertPlugin)
 Vue.use(VueRouter)
@@ -31,9 +33,11 @@ FastClick.attach(document.body)
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
 /* eslint-disable no-new */
-let app=new Vue({
+
+window.app = new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app-box')
+
 export default app

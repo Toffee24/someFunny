@@ -21,7 +21,6 @@
           </grid-item>
         </grid>
       </ul>
-
       <div v-transfer-dom>
         <previewer :list="imgSrc" ref="previewer"></previewer>
       </div>
@@ -39,7 +38,6 @@
   import axios from 'axios'
   import {XImg, Grid, GridItem, InlineLoading, Previewer, TransferDom, XButton} from 'vux'
   import PullTo from 'vue-pull-to'
-  import {addClass, removeClass} from '../untils/dom'
 
   export default {
     directives: {
@@ -47,9 +45,9 @@
     },
     created() {
       this.$nextTick(() => {
-        this.loadPic()
+        // this.loadPic()
         this.getCollection()
-        let wrapperHeight = this.$refs.scrollWrapper.clientHeight
+        var wrapperHeight = this.$refs.scrollWrapper.clientHeight
         this.$refs.scrollContent.style.minHeight = wrapperHeight + 1 + 'px'
       })
     },
@@ -74,7 +72,6 @@
       TransferDom,
       XButton
     },
-    computed: {},
     methods: {
       show(index) {
         this.$refs.previewer.show(index)
@@ -105,7 +102,7 @@
               .then(function (response) {
                 _this.imgSrc = []
                 response.data.results.forEach(function (el, idx) {
-                  _this.imgSrc.push({src: el.url, isFavourited: false})
+                  _this.imgSrc.push({src: el.url})
                 })
                 if (loaded) {
                   loaded('done')
@@ -126,59 +123,47 @@
       loadMore(loaded) {
         this.loadPic(loaded, true)
       },
-      clickFavouvirtImg(e, url) {
-        this.$axios.post('/addCollection', {
-          imgUrl: url,
-          userId: JSON.parse(sessionStorage.getItem('userInfo')).userId
+      clickFavouvirtImg(url, isFavourited) {
+        console.log(url)
+      },
+      getCollection() {
+        this.$axios.get('/searchCollection', {
+          params: {
+            userId: 1
+          }
         }).then((res) => {
           if (res.data.code == 200) {
-            if (res.data.type == 1) {
-              //添加
-              this.$vux.toast.text('添加收藏成功', 'middle')
-              removeClass(e.target, 'blank')
-              addClass(e.target, 'favourited')
-            }
-            if (res.data.type == 2) {
-              //删除
-              this.$vux.toast.text('取消收藏成功', 'middle')
-              removeClass(e.target, 'favourited')
-              addClass(e.target, 'blank')
-            }
+            res.data.itemArr.forEach((e, i) => {
+              let item = {
+                h: 0,
+                w: 0,
+                msrc: e,
+                src: e
+              }
+              this.imgSrc.push(item)
+            })
           }
         })
       },
-      getCollection() {
-        if (this.$store.state.userInfo && this.$store.state.userInfo['userId']) {
-          this.$axios.get('/searchCollection', {
-            params: {
-              userId: this.$store.state.userInfo['userId']
-            }
-          }).then((res) => {
-            if (res.data.code == 200) {
-              this.userFavouritedItem = res.data.itemArr
-            }
+      watch: {
+        imgSrc() {
+          this.imgSrc.forEach((e, i) => {
+            this.userFavouritedItem.forEach((ele, idx) => {
+              if (e.src == ele) {
+                e.isFavourited = true
+              }
+            })
+          })
+        },
+        userFavouritedItem() {
+          this.imgSrc.forEach((e, i) => {
+            this.userFavouritedItem.forEach((ele, idx) => {
+              if (e.src == ele) {
+                e.isFavourited = true
+              }
+            })
           })
         }
-      }
-    },
-    watch: {
-      imgSrc() {
-        this.imgSrc.forEach((e, i) => {
-          this.userFavouritedItem.forEach((ele, idx) => {
-            if (e.src == ele) {
-              e.isFavourited = true
-            }
-          })
-        })
-      },
-      userFavouritedItem() {
-        this.imgSrc.forEach((e, i) => {
-          this.userFavouritedItem.forEach((ele, idx) => {
-            if (e.src == ele) {
-              e.isFavourited = true
-            }
-          })
-        })
       }
     }
   }
