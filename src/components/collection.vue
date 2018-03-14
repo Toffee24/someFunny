@@ -1,7 +1,7 @@
 <template>
   <div class="scrollWrapper" ref="scrollWrapper">
-    <pull-to :top-load-method="refresh" @infinite-scroll="loadMore" :top-config="TOPCONFIG" :top-block-height="65">
-      <ul class="content" ref="scrollContent">
+    <pull-to :top-load-method="refresh" :top-config="TOPCONFIG" :top-block-height="65">
+      <ul class="content" ref="scrollContent" v-if="imgSrc.length">
         <grid>
           <grid-item>
             <div v-for="(item,index) in imgSrc" v-if="index%2===0" class="imgWrap">
@@ -18,13 +18,12 @@
           </grid-item>
         </grid>
       </ul>
+      <div v-if="!imgSrc.length" class="notFound">
+        <img src="/static/notFound.png">
+      </div>
       <div v-transfer-dom>
         <previewer :list="imgSrc" ref="previewer"></previewer>
       </div>
-      <p style="text-align:center;">
-        <inline-loading></inline-loading>
-        <span style="vertical-align:middle;display:inline-block;font-size:14px;">&nbsp;&nbsp;加载中</span>
-      </p>
     </pull-to>
   </div>
 
@@ -33,9 +32,8 @@
 
 <script>
   import axios from 'axios'
-  import {Grid, GridItem, InlineLoading, Previewer, TransferDom, XButton, XImg} from 'vux'
+  import {Grid, GridItem, Previewer, TransferDom, XButton, XImg} from 'vux'
   import PullTo from 'vue-pull-to'
-  import {addClass, removeClass} from '../untils/dom'
 
   export default {
     directives: {
@@ -43,10 +41,9 @@
     },
     created() {
       this.$nextTick(() => {
-        // this.loadPic()
         this.getCollection()
         var wrapperHeight = this.$refs.scrollWrapper.clientHeight
-        this.$refs.scrollContent.style.minHeight = wrapperHeight + 1 + 'px'
+        this.$refs.scrollContent ? this.$refs.scrollContent.style.minHeight = wrapperHeight + 1 + 'px' : ''
       })
     },
     data() {
@@ -64,7 +61,6 @@
       Grid,
       GridItem,
       PullTo,
-      InlineLoading,
       Previewer,
       TransferDom,
       XButton
@@ -73,81 +69,37 @@
       show(index) {
         this.$refs.previewer.show(index)
       },
-      loadPic(loaded, isMore) {
-        var _this = this
-        if (isMore) {
-          _this.pageIndex++
-          let url = 'https://gank.io/api/data/%E7%A6%8F%E5%88%A9/10/' + _this.pageIndex
-          axios.get(url)
-            .then(function (response) {
-              response.data.results.forEach(function (el, idx) {
-                _this.imgSrc.push({src: el.url})
-              })
-              if (loaded) {
-                loaded('done')
-              }
-            })
-            .catch(function (error) {
-              console.log(error)
-              if (loaded) {
-                loaded('fail')
-              }
-            })
-        } else {
-          _this.$nextTick(function () {
-            axios.get('https://gank.io/api/data/%E7%A6%8F%E5%88%A9/10/1')
-              .then(function (response) {
-                _this.imgSrc = []
-                response.data.results.forEach(function (el, idx) {
-                  _this.imgSrc.push({src: el.url})
-                })
-                if (loaded) {
-                  loaded('done')
-                }
-              })
-              .catch(function (error) {
-                console.log(error)
-                if (loaded) {
-                  loaded('fail')
-                }
-              })
-          })
-        }
-      },
       refresh(loaded) {
-        this.loadPic(loaded)
-      },
-      loadMore(loaded) {
-        this.loadPic(loaded, true)
+        this.getCollection(loaded)
       },
       clickFavouvirtImg(e, url) {
         this.$axios.post('/addCollection', {
           imgUrl: url,
-          userId: JSON.parse(sessionStorage.getItem('userInfo')).userId
+          userId: this.$store.state.userInfo['userId']
         }).then((res) => {
           if (res.data.code == 200) {
-            if (res.data.type == 1) {
-              //添加
-              this.$vux.toast.text('添加收藏成功', 'middle')
-              removeClass(e.target, 'blank')
-              addClass(e.target, 'favourited')
-            }
             if (res.data.type == 2) {
               //删除
               this.$vux.toast.text('取消收藏成功', 'middle')
-              removeClass(e.target, 'favourited')
-              addClass(e.target, 'blank')
+              this.getCollection()
             }
           }
         })
       },
-      getCollection() {
+      getCollection(loaded) {
         this.$axios.get('/searchCollection', {
           params: {
-            userId: 1
+            userId: this.$store.state.userInfo['userId']
           }
         }).then((res) => {
+          this.imgSrc = []
+          if (loaded) {
+            loaded('done')
+          }
           if (res.data.code == 200) {
+            if (res.data.itemArr.length == 0) {
+              this.$vux.toast.text('当前没有任何收藏哦', 'middle')
+            }
             res.data.itemArr.forEach((e, i) => {
               let item = {
                 h: 0,
@@ -160,6 +112,13 @@
           }
         })
       }
+    },
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        if (!vm.$store.state.userInfo) {
+          vm.$router.push({path: '/'})
+        }
+      })
     }
   }
 </script>
@@ -172,6 +131,9 @@
       list-style: none;
       margin: 0;
       padding: 0;
+      .weui-grid {
+        padding: 5px 8px;
+      }
       .weui-grid:active {
         background-color: transparent;
       }
@@ -210,6 +172,10 @@
           fill: #F70968;
         }
       }
+    }
+    .notFound {
+      text-align: center;
+      margin-top: 45%;
     }
   }
 

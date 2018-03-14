@@ -94,7 +94,7 @@
           }else{
             this.$vux.toast.text('登陆成功', 'middle')
             this.$store.commit('userInfo',res.data)
-            this.$store.commit('itemName','今日干货')
+            this.$store.commit('itemName', '每日干货')
             this.$router.push({ path: '/dayNews' })
           }
         })

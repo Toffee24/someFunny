@@ -127,6 +127,10 @@
         this.loadPic(loaded, true)
       },
       clickFavouvirtImg(e, url) {
+        if (!this.$store.state.userInfo) {
+          this.$vux.toast.text('您还没有登录哟', 'middle')
+          return
+        }
         this.$axios.post('/addCollection', {
           imgUrl: url,
           userId: JSON.parse(sessionStorage.getItem('userInfo')).userId
@@ -192,6 +196,9 @@
       list-style: none;
       margin: 0;
       padding: 0;
+      .weui-grid {
+        padding: 5px 8px;
+      }
       .weui-grid:active {
         background-color: transparent;
       }

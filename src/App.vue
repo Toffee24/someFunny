@@ -8,6 +8,7 @@
             <blur :blur-amount=40 :url="logourl">
               <p class="center"><img :src="logourl" class="logo"></p>
               <p class="loginName">{{userName}}</p>
+              <p class="writers">by Toffee</p>
             </blur>
           </div>
         </div>
@@ -38,6 +39,7 @@
               <img src="static/dingling.png" width="15" height="15" style="margin-right: 10px;">随便看看
             </div>
           </cell-box>
+          <x-button class="loginOut" @click.native="logout" v-if="isShowLogOut">退出登录</x-button>
         </group>
       </div>
       <div slot="default">
@@ -58,7 +60,7 @@
 </template>
 
 <script>
-  import {Drawer, Group, Cell, CellBox, Card, Blur, XHeader, Sticky} from 'vux'
+  import {Drawer, Group, Cell, CellBox, Card, Blur, XHeader, Sticky, XButton} from 'vux'
   //  import router from './router/index'
   export default {
     name: 'app',
@@ -70,7 +72,8 @@
       Card,
       Blur,
       XHeader,
-      Sticky
+      Sticky,
+      XButton
     },
     created() {
       this.bodyScroll = function (event) {
@@ -94,7 +97,10 @@
         return this.$store.state.userInfo ? true : false
       },
       userName() {
-        return this.$store.state.userInfo? this.$store.state.userInfo.userName : '未登陆'
+        return this.$store.state.userInfo ? this.$store.state.userInfo.userName : '未登陆'
+      },
+      isShowLogOut() {
+        return this.$store.state.userInfo ? true : false
       }
     },
     methods: {
@@ -123,7 +129,14 @@
       },
       getPath() {
         //路由变化
-        console.log(this.$router)
+        this.$store.commit('itemName', this.$router.currentRoute.name)
+      },
+      logout() {
+        this.$store.commit('userInfo', null)
+        this.$vux.alert.show({
+          content: '您已退出登录'
+        })
+        this.$router.push({path: '/'})
       }
     },
     watch: {
@@ -160,6 +173,10 @@
         font-size: 15px;
         color: #313131;
       }
+      .loginOut {
+        margin-top: 150px;
+        font-size: 16px;
+      }
     }
   }
 
@@ -170,6 +187,13 @@
     margin-top: 20px;
   }
 
+  .writers {
+    color: #2c2c2c;
+    font-size: 12px;
+    position: absolute;
+    bottom: 4px;
+    right: 7px;
+  }
   .center {
     text-align: center;
     padding-top: 20px;
