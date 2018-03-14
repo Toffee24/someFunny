@@ -37,7 +37,7 @@
 
 <script>
   import axios from 'axios'
-  import {XImg, Grid, GridItem, InlineLoading, Previewer, TransferDom, XButton} from 'vux'
+  import {Grid, GridItem, InlineLoading, Previewer, TransferDom, XButton, XImg} from 'vux'
   import PullTo from 'vue-pull-to'
   import {addClass, removeClass} from '../untils/dom'
 
@@ -182,8 +182,8 @@
       }
     }
   }
-
 </script>
+
 <style lang="scss" scoped>
   .scrollWrapper {
     height: 100%;

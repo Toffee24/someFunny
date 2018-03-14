@@ -6,16 +6,13 @@
           <grid-item>
             <div v-for="(item,index) in imgSrc" v-if="index%2===0" class="imgWrap">
               <img class="ximg-demo" v-lazy="item.src" @click="show(index)">
-              <div class="img-favourite blank" @click="clickFavouvirtImg($event,item.src)"
-                   :class="{favourited:item.isFavourited}">
-              </div>
+              <div class="img-favourite favourited" @click="clickFavouvirtImg($event,item.src)"></div>
             </div>
           </grid-item>
           <grid-item>
             <div v-for="(item,index) in imgSrc" v-if="index%2!==0" class="imgWrap">
               <img class="ximg-demo" v-lazy="item.src" @click="show(index)">
-              <div class="img-favourite blank" @click="clickFavouvirtImg($event,item.src)"
-                   :class="{favourited:item.isFavourited}">
+              <div class="img-favourite favourited" @click="clickFavouvirtImg($event,item.src)">
               </div>
             </div>
           </grid-item>
@@ -36,8 +33,9 @@
 
 <script>
   import axios from 'axios'
-  import {XImg, Grid, GridItem, InlineLoading, Previewer, TransferDom, XButton} from 'vux'
+  import {Grid, GridItem, InlineLoading, Previewer, TransferDom, XButton, XImg} from 'vux'
   import PullTo from 'vue-pull-to'
+  import {addClass, removeClass} from '../untils/dom'
 
   export default {
     directives: {
@@ -54,7 +52,6 @@
     data() {
       return {
         imgSrc: [],
-        userFavouritedItem: [],
         TOPCONFIG: {
           triggerDistance: 50,
           stayDistance: 40,
@@ -123,8 +120,26 @@
       loadMore(loaded) {
         this.loadPic(loaded, true)
       },
-      clickFavouvirtImg(url, isFavourited) {
-        console.log(url)
+      clickFavouvirtImg(e, url) {
+        this.$axios.post('/addCollection', {
+          imgUrl: url,
+          userId: JSON.parse(sessionStorage.getItem('userInfo')).userId
+        }).then((res) => {
+          if (res.data.code == 200) {
+            if (res.data.type == 1) {
+              //添加
+              this.$vux.toast.text('添加收藏成功', 'middle')
+              removeClass(e.target, 'blank')
+              addClass(e.target, 'favourited')
+            }
+            if (res.data.type == 2) {
+              //删除
+              this.$vux.toast.text('取消收藏成功', 'middle')
+              removeClass(e.target, 'favourited')
+              addClass(e.target, 'blank')
+            }
+          }
+        })
       },
       getCollection() {
         this.$axios.get('/searchCollection', {
@@ -144,31 +159,11 @@
             })
           }
         })
-      },
-      watch: {
-        imgSrc() {
-          this.imgSrc.forEach((e, i) => {
-            this.userFavouritedItem.forEach((ele, idx) => {
-              if (e.src == ele) {
-                e.isFavourited = true
-              }
-            })
-          })
-        },
-        userFavouritedItem() {
-          this.imgSrc.forEach((e, i) => {
-            this.userFavouritedItem.forEach((ele, idx) => {
-              if (e.src == ele) {
-                e.isFavourited = true
-              }
-            })
-          })
-        }
       }
     }
   }
-
 </script>
+
 <style lang="scss" scoped>
   .scrollWrapper {
     height: 100%;
