@@ -28,7 +28,7 @@
 </template>
 
 <script>
-  import {XInput, Group, XButton, Cell} from 'vux'
+  import {Cell, Group, XButton, XInput} from 'vux'
 
   export default {
     name: "login",
@@ -70,6 +70,7 @@
             this.$vux.alert.show({
               content: res.data.message
             })
+            return
           }
           this.$vux.alert.show({
             content: '注册成功'
