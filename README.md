@@ -11,7 +11,7 @@
 
 >* 手机扫一扫
 
-![项目二维码.png]()
+![项目二维码.png](https://github.com/Toffee24/someFunny/blob/master/static/code.png?raw=true)
 
 
 ### 项目技术架构
