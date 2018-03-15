@@ -1,9 +1,9 @@
 # somefunny
 
-> 预览地址：[点我](https://toffee24.github.io/someFunny/dist/index.html)
+> 预览地址：[点我](http://www.toffee24.tk)
 
->  一款咨询获取展示的小项目，接口来自第三方gank.io。
->  目前在增加python-flask框架RESTful接口，增加登陆，收藏功能。
+>  一款资讯获取展示的小项目，图片信息，以及文章信息来自第三方接口gank.io
+>  使用python-flask 框架，实现了注册，登陆，收藏功能。
 
 ***
 
@@ -11,7 +11,7 @@
 
 >* 手机扫一扫
 
-![项目二维码.png](https://chaqianma-open.oss-cn-hangzhou.aliyuncs.com/data/1511340610982.png)
+![项目二维码.png]()
 
 
 ### 项目技术架构
