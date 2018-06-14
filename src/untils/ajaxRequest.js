@@ -1,7 +1,7 @@
 import axios from 'axios'
 import app from '../main'
 
-let serverpath = 'http://104.194.89.183:5000'
+let serverpath = 'http://127.0.0.1:5000'//'http://176.122.129.216:5000'
 
 //创建axios实例
 let instance = axios.create({
